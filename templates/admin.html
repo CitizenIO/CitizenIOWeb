@@ -1,0 +1,109 @@
+<html>
+  <head>
+    <script src="https://www.gstatic.com/firebasejs/8.2.8/firebase-app.js"></script>
+    <script src="https://kit.fontawesome.com/fe04c7987a.js" crossorigin="anonymous"></script>
+
+    <!-- TODO: Add SDKs for Firebase products that you want to use
+        https://firebase.google.com/docs/web/setup#available-libraries -->
+    <script src="https://www.gstatic.com/firebasejs/8.2.8/firebase-analytics.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.2.8/firebase-firestore.js"></script>
+
+<!-- CSS only -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<!-- JavaScript Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+    <script>
+      // Your web app's Firebase configuration
+      // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+      var firebaseConfig = {
+        apiKey: "AIzaSyCdTkYMcQCvbl7DHobYbCH0mc_DGMFPbIc",
+        authDomain: "citizenio.firebaseapp.com",
+        projectId: "citizenio",
+        storageBucket: "citizenio.appspot.com",
+        messagingSenderId: "883087875716",
+        appId: "1:883087875716:web:e9175829ba8669f03d2cd1",
+        measurementId: "G-9PCVRH1CNC"
+      };
+
+      // Initialize Firebase
+      firebase.initializeApp(firebaseConfig);
+      firebase.analytics();
+      var db = firebase.firestore();
+      var data;
+
+      function getProjectDetails() {
+        console.log("Getting data");
+        db.collection("Projects").get().then((querySnapshot) => {
+          querySnapshot.forEach((doc) => {
+            if (doc.id != 'ProjectIds') {
+              data = doc.data();
+              var verified = data['Verified']
+              var className;
+              if (verified == true) {
+                className = "fa fa-check-square";
+              }
+              else {
+                className = "fa fa-minus-square";
+              }
+              $('#project-lists').append('<li id="projectName" onClick="clickedProject(\'' + data['ProjectId'] + '\')" data-projectId="' + data['ProjectId'] + '" class="list-group-item d-flex justify-content-between align-items-center" style="font-size: 70px;">' + data['Headline'] + '<i id="' + data['ProjectId'] + '_icon" class="' + className + '"></i></li>'); 
+            }            
+          });
+        });
+      }
+
+      function clickedProject(projectId) {
+        console.log("Clicked on project: " + projectId);
+        var className = $('#' + projectId + '_icon').attr('class');
+        if (className == 'fa fa-minus-square') {
+          $('#' + projectId + '_icon').removeClass(className);
+          $('#' + projectId + '_icon').addClass('fa fa-check-square');
+          // Verify project
+          db.collection('Projects').doc(projectId).update({
+              'Verified': true
+          })
+          .then(() => {
+              console.log("Document successfully updated!");
+          })
+          .catch((error) => {
+              // The document probably doesn't exist.
+              console.error("Error updating document: ", error);
+          })
+        }
+        else if (className == 'fa fa-check-square'){
+          $('#' + projectId + '_icon').removeClass(className);
+          $('#' + projectId + '_icon').addClass('fa fa-minus-square');
+          // Unverify project
+          db.collection('Projects').doc(projectId).update({
+              'Verified': false
+          })
+          .then(() => {
+              console.log("Document successfully updated!");
+          })
+          .catch((error) => {
+              // The document probably doesn't exist.
+              console.error("Error updating document: ", error);
+          })
+        }
+      }
+    </script>
+
+    <script type="text/javascript" src="static/home.js"></script>
+
+    <title>Admin Page</title>
+  </head>
+  <body>
+    <div class="container-fluid">
+      <div class="col-md-12">
+        <ul id="project-lists" class="list-group"></ul>
+      </div>
+    </div>    
+
+    <script type="text/javascript">
+      $(document).ready(function() {
+        console.log("Document is ready");
+        getProjectDetails()
+      })
+    </script>
+  </body>
+</html>

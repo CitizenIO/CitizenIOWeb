@@ -1,0 +1,35 @@
+#logo {
+    width: 55;
+    height: 55;
+}
+
+#title {
+    font-family: 'Varela'; 
+    display: contents;
+    color: white;
+}
+
+#nav-buttons {
+    margin-left: 5px;
+    margin-right: 5px;
+    background-color: #28354f;
+    color: white;    
+    border-color: #28354f;
+}
+
+#nav-buttons:hover {
+    background-color: #35435e;
+}
+
+body {
+    background-color: #111827 !important;
+}
+
+#navbar {
+    background-color: #111827;
+}
+
+@font-face {
+    font-family: 'Varela';
+    src: 'static/fonts/Varela-Regular.tff';
+}
